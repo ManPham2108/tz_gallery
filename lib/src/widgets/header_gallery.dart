@@ -1,11 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:tz_gallery/src/presentation/tz_folder_page.dart';
+import 'package:tz_gallery/src/presentation/tz_gallery_controller.dart';
+import 'package:tz_gallery/src/widgets/transition/slide_up.dart';
 
 class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
   const TzHeaderGallery(
-      {super.key, this.leading, required this.title, this.styles});
+      {super.key, this.leading, required this.controller, this.styles});
+  final TzGalleryController controller;
   final Widget? leading;
-  final String title;
   final TextStyle? styles;
   @override
   Widget build(BuildContext context) {
@@ -29,9 +33,16 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
-                      style: styles,
+                    GestureDetector(
+                      onTap: () => Navigator.push(context,
+                          SlideUp(TzFolderPage(controller: controller))),
+                      child: ValueListenableBuilder(
+                        valueListenable: controller.currentFolder,
+                        builder: (context, value, child) => Text(
+                          value?.name ?? "",
+                          style: styles,
+                        ),
+                      ),
                     ),
                     const Icon(Icons.keyboard_arrow_down)
                   ],

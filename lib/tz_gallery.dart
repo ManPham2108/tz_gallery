@@ -1,3 +1,3 @@
 library tz_gallery;
 
-export 'package:tz_gallery/src/widgets/header_gallery.dart';
+export 'package:tz_gallery/src/common/tz_enum.dart';

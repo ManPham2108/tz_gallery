@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
 class GalleryItem extends StatelessWidget {
   const GalleryItem({super.key, this.index, required this.asset});
@@ -8,14 +9,10 @@ class GalleryItem extends StatelessWidget {
   final AssetEntity asset;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: asset.file,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        }
-        return Image.asset(snapshot.data?.path ?? "", fit: BoxFit.cover);
-      },
+    return AssetEntityImage(
+      asset,
+      isOriginal: false,
+      fit: BoxFit.cover,
     );
   }
 }
