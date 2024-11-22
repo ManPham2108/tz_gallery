@@ -2,55 +2,69 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:tz_gallery/src/presentation/tz_folder_page.dart';
-import 'package:tz_gallery/src/presentation/tz_gallery_controller.dart';
-import 'package:tz_gallery/src/widgets/transition/slide_up.dart';
+import 'package:tz_gallery/src/widgets/transition/slide_down.dart';
+import 'package:tz_gallery/tz_gallery.dart';
 
 class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
-  const TzHeaderGallery(
-      {super.key, this.leading, required this.controller, this.styles});
+  const TzHeaderGallery({super.key, required this.controller, this.center});
   final TzGalleryController controller;
-  final Widget? leading;
-  final TextStyle? styles;
+  final Widget? center;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: const BoxDecoration(color: Colors.red),
+        decoration: const BoxDecoration(color: Colors.transparent),
         child: Stack(
           children: [
             Row(children: [
-              leading ??
-                  GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        child: Icon(Icons.arrow_back_ios, size: 24),
-                      )),
+              GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: TzGallery.shared.options?.leading ??
+                          const Icon(Icons.arrow_back_ios, size: 24),
+                    ),
+                  )),
             ]),
             Align(
                 alignment: Alignment.center,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                child: center ??
                     GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          SlideUp(TzFolderPage(controller: controller))),
-                      child: ValueListenableBuilder(
-                        valueListenable: controller.currentFolder,
-                        builder: (context, value, child) => Text(
-                          value?.name ?? "",
-                          style: styles,
-                        ),
+                      onTap: () => onSelectFolder(context),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ValueListenableBuilder(
+                            valueListenable: controller.currentFolder,
+                            builder: (context, value, child) => Text(
+                              value?.name ?? "",
+                              style:
+                                  TzGallery.shared.options?.headerTextStyle ??
+                                      const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.keyboard_arrow_down)
+                        ],
                       ),
-                    ),
-                    const Icon(Icons.keyboard_arrow_down)
-                  ],
-                ))
+                    ))
           ],
         ),
       ),
     );
+  }
+
+  Future onSelectFolder(BuildContext context) async {
+    AssetPathEntity? callback = await Navigator.push(
+        context, SlideDown(TzFolderPage(controller: controller)));
+    if (callback != null) {
+      controller.currentFolder.value = callback;
+    }
   }
 
   @override

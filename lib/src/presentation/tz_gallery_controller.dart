@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:tz_gallery/src/common/tz_enum.dart';
-import 'package:tz_gallery/src/repositories/gallery_repository.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tz_gallery/src/repositories/gallery_repository.dart';
+import 'package:tz_gallery/tz_gallery.dart';
 
 class TzGalleryController {
   final IGalleryRepository _galleryRepository = GalleryRepository();
@@ -20,6 +20,9 @@ class TzGalleryController {
   bool outOfContent = false;
 
   TzGalleryController({TzType? type}) {
+    currentFolder.addListener(() {
+      _getEntitiesInFolder();
+    });
     _initialize(type);
 
     _loadController.stream
@@ -41,14 +44,17 @@ class TzGalleryController {
       // Fetch assets if paths are not empty, avoid fetching if already done
       if (folders.value.isNotEmpty) {
         currentFolder.value = folders.value.first;
-        final assets = await _galleryRepository.getAssets(currentFolder.value!);
-        // Update entities only if there are changes
-        if (entities.value != assets) {
-          entities.value = assets;
-        }
       }
     } catch (e) {
       print('Error loading assets or paths: $e');
+    }
+  }
+
+  Future<void> _getEntitiesInFolder() async {
+    final assets = await _galleryRepository.getAssets(currentFolder.value!);
+    // Update entities only if there are changes
+    if (entities.value != assets) {
+      entities.value = assets;
     }
   }
 
@@ -83,5 +89,6 @@ class TzGalleryController {
     entities.dispose();
     folders.dispose();
     _loadController.close();
+    TzGallery.shared.release();
   }
 }

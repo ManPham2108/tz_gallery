@@ -32,7 +32,7 @@ class GalleryRepository implements IGalleryRepository {
           requestType = RequestType.video;
           break;
         case TzType.all:
-          requestType = RequestType.all;
+          requestType = RequestType.common;
         default:
       }
       final List<AssetPathEntity> paths =

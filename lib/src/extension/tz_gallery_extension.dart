@@ -2,15 +2,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:tz_gallery/src/presentation/tz_gallery_controller.dart';
 import 'package:tz_gallery/src/presentation/tz_gallery_page.dart';
+import 'package:tz_gallery/tz_gallery.dart';
 
 extension TzGalleryExtension on TzGalleryController {
-  Future<List<File>> pick(BuildContext context, {int? limit}) async {
+  Future<List<File>> openGallery(BuildContext context,
+      {int? limit, TzGalleryOptions? options}) async {
+    if (options != null) {
+      TzGallery.shared.setOptions(options);
+    }
+
+    final PermissionState ps = await PhotoManager.requestPermissionExtend();
+    if (ps.isAuth || ps.hasAccess) {
+    } else {
+      PhotoManager.openSetting();
+      return [];
+    }
+
     // Navigate and fetch the callback (list of AssetEntities)
     List<AssetEntity>? callback = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TzPickerPage(limit: limit)),
+      MaterialPageRoute(
+          builder: (context) => TzPickerPage(limit: limit, controller: this)),
     );
 
     // If no items were selected, return an empty list.
