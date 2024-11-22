@@ -12,49 +12,44 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Stack(
-          children: [
-            Row(children: [
-              GestureDetector(
-                  onTap: () => Navigator.pop(context),
+      child: Stack(
+        children: [
+          Row(children: [
+            GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: TzGallery.shared.options?.leading ??
-                          const Icon(Icons.arrow_back_ios, size: 24),
-                    ),
-                  )),
-            ]),
-            Align(
-                alignment: Alignment.center,
-                child: center ??
-                    GestureDetector(
-                      onTap: () => onSelectFolder(context),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ValueListenableBuilder(
-                            valueListenable: controller.currentFolder,
-                            builder: (context, value, child) => Text(
-                              value?.name ?? "",
-                              style:
-                                  TzGallery.shared.options?.headerTextStyle ??
-                                      const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16),
-                            ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: TzGallery.shared.options?.leading ??
+                        const Icon(Icons.arrow_back_ios, size: 24),
+                  ),
+                )),
+          ]),
+          Align(
+              alignment: Alignment.center,
+              child: center ??
+                  GestureDetector(
+                    onTap: () => onSelectFolder(context),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ValueListenableBuilder(
+                          valueListenable: controller.currentFolder,
+                          builder: (context, value, child) => Text(
+                            value?.name ?? "",
+                            style: TzGallery.shared.options?.headerTextStyle ??
+                                const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 16),
                           ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.keyboard_arrow_down)
-                        ],
-                      ),
-                    ))
-          ],
-        ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.keyboard_arrow_down)
+                      ],
+                    ),
+                  ))
+        ],
       ),
     );
   }
