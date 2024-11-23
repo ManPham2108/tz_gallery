@@ -6,10 +6,16 @@ import 'package:tz_gallery/src/presentation/tz_gallery_page.dart';
 import 'package:tz_gallery/tz_gallery.dart';
 
 extension TzGalleryExtension on TzGalleryController {
-  Future<List<File>> openGallery(BuildContext context,
-      {int? limit, TzGalleryOptions? options}) async {
+  Future<List<AssetEntity>> openGallery(BuildContext context,
+      {int limit = 1,
+      TzGalleryOptions? options,
+      List<AssetEntity> entities = const []}) async {
     if (options != null) {
       TzGallery.shared.setOptions(options);
+    }
+
+    if (entities.isNotEmpty) {
+      picked.value = entities;
     }
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
@@ -25,13 +31,18 @@ extension TzGalleryExtension on TzGalleryController {
       MaterialPageRoute(
           builder: (context) => TzPickerPage(limit: limit, controller: this)),
     );
-
+    picked.value.clear();
     // If no items were selected, return an empty list.
     if (callback == null) return [];
 
+    return callback;
     // Create a list of Future<File?> where each future corresponds to a file for each AssetEntity
-    List<Future<File?>> fileFutures =
-        callback.map((item) => item.file).toList();
+  }
+}
+
+extension AssetEntityListExt on List<AssetEntity> {
+  Future<List<File>> fromAssetEntitiesToFiles() async {
+    List<Future<File?>> fileFutures = this.map((item) => item.file).toList();
 
     // Wait for all file fetch operations to complete in parallel
     List<File?> files = await Future.wait(fileFutures);
@@ -39,7 +50,6 @@ extension TzGalleryExtension on TzGalleryController {
     // Filter out any null values and maintain the original order
     // Here we make sure to map the future results back in their original index order
     List<File> shouldReturn = files.whereType<File>().toList();
-
     return shouldReturn;
   }
 }

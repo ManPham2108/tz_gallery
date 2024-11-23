@@ -2,6 +2,7 @@ library tz_gallery;
 
 import 'package:tz_gallery/src/models/tz_gallery_options.dart';
 
+export 'package:photo_manager/src/types/entity.dart';
 export 'package:tz_gallery/src/common/tz_enum.dart';
 export 'package:tz_gallery/src/extension/tz_gallery_extension.dart';
 export 'package:tz_gallery/src/models/tz_gallery_options.dart';

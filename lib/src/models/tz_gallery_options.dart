@@ -8,11 +8,13 @@ class TzGalleryOptions {
   final Widget? leading;
   final String? titleFolderPage;
   final Widget? emptyFolder;
+  final Text? submitTitle;
   TzGalleryOptions(
       {this.headerTextStyle,
       this.folderPrimaryTextStyle,
       this.folderSecondaryTextStyle,
       this.titleFolderPage,
       this.emptyFolder,
+      this.submitTitle,
       this.leading});
 }

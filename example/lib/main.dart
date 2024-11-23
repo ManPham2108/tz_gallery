@@ -57,9 +57,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TzGalleryController controller = TzGalleryController();
-  void _incrementCounter(BuildContext context) {
-    controller.openGallery(context,
-        options: TzGalleryOptions(titleFolderPage: "Chọn album"));
+  void _incrementCounter(BuildContext context) async {
+    final List<AssetEntity> data = await controller.openGallery(context,
+        options: TzGalleryOptions(titleFolderPage: "Chọn album"), limit: 10);
+    final summary = await data.fromAssetEntitiesToFiles();
+    print(summary);
   }
 
   @override
