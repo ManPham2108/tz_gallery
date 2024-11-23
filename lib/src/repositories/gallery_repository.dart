@@ -4,7 +4,7 @@ import 'package:tz_gallery/src/common/tz_enum.dart';
 abstract class IGalleryRepository {
   Future<List<AssetPathEntity>> getAssetsPath(TzType type);
   Future<List<AssetEntity>> getAssets(AssetPathEntity path,
-      {int page = 1, int limit = 40});
+      {int page = 0, int limit = 40});
 }
 
 class GalleryRepository implements IGalleryRepository {

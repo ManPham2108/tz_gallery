@@ -51,6 +51,7 @@ class TzGalleryController {
   }
 
   Future<void> _getEntitiesInFolder() async {
+    _clearLoadMoreState();
     final assets = await _galleryRepository.getAssets(currentFolder.value!);
     // Update entities only if there are changes
     if (entities.value != assets) {
@@ -83,6 +84,11 @@ class TzGalleryController {
   void onRemove(AssetEntity entity) {
     picked.value.removeWhere((element) => element.id == entity.id);
     picked.value = List.from(picked.value);
+  }
+
+  void _clearLoadMoreState() {
+    _page = 0;
+    outOfContent = false;
   }
 
   void dispose() {

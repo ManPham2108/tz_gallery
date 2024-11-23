@@ -47,7 +47,7 @@ class TzFolderPage extends StatelessWidget {
                         folder: value[index],
                       );
                     }
-                    return Container();
+                    return const SizedBox();
                   },
                 ),
               ),

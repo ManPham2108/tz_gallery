@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:tz_gallery/src/widgets/gallery_bottom_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_item.dart';
@@ -65,34 +67,36 @@ class _TzPickerPageState extends State<TzPickerPage> {
             valueListenable: _controller.picked,
             builder: (context, value, child) => Column(
               children: [
-                SizedBox(
-                  height: 80,
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => GalleryBottomItem(
-                      entity: value[index],
-                      onTap: () => _controller.onRemove(value[index]),
+                if (value.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: SizedBox(
+                      height: 80,
+                      child: ListView.separated(
+                        itemBuilder: (context, index) => GalleryBottomItem(
+                          entity: value[index],
+                          onTap: () => _controller.onRemove(value[index]),
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: value.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 8),
+                      ),
                     ),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: value.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 8),
                   ),
-                ),
-                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: FilledButton(
                         style: FilledButton.styleFrom(
-                            backgroundColor:
-                                value.isEmpty ? Colors.grey : Colors.black,
+                            backgroundColor: btnColor,
                             splashFactory: NoSplash.splashFactory,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12))),
                         onPressed: submit,
                         child: TzGallery.shared.options?.submitTitle ??
-                            const Text("Complete")),
+                            const Text("Next")),
                   ),
                 )
               ],
@@ -117,5 +121,13 @@ class _TzPickerPageState extends State<TzPickerPage> {
   void submit() {
     if (_controller.picked.value.isEmpty) return;
     return Navigator.pop(context, _controller.picked.value.toList());
+  }
+
+  Color get btnColor {
+    final options = TzGallery.shared.options;
+    if (_controller.picked.value.isEmpty) {
+      return options?.inactiveButtonColor ?? Colors.grey;
+    }
+    return options?.activeButtonColor ?? Colors.black;
   }
 }

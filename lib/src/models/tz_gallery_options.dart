@@ -9,6 +9,8 @@ class TzGalleryOptions {
   final String? titleFolderPage;
   final Widget? emptyFolder;
   final Text? submitTitle;
+  final Color? activeButtonColor;
+  final Color? inactiveButtonColor;
   TzGalleryOptions(
       {this.headerTextStyle,
       this.folderPrimaryTextStyle,
@@ -16,5 +18,7 @@ class TzGalleryOptions {
       this.titleFolderPage,
       this.emptyFolder,
       this.submitTitle,
+      this.activeButtonColor,
+      this.inactiveButtonColor,
       this.leading});
 }
