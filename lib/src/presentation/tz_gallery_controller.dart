@@ -77,8 +77,7 @@ class TzGalleryController {
     _loadController.sink.add(true);
   }
 
-  void onPick(AssetEntity entity, {int? limit}) {
-    if (limit != null && picked.value.length > limit) return;
+  void onPick(AssetEntity entity) {
     picked.value = List.from([...picked.value, entity]);
   }
 

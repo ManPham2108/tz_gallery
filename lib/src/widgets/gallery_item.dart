@@ -23,15 +23,18 @@ class GalleryItem extends StatelessWidget {
             ),
           ),
           if (index != null && index != -1)
-            Align(
-              alignment: Alignment.topRight,
-              child: Badge(
-                backgroundColor:
-                    TzGallery.shared.options?.badgedColor ?? Colors.green,
-                label: Text(
-                  "${(index ?? 0) + 1}",
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w400),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Badge(
+                  backgroundColor:
+                      TzGallery.shared.options?.badgedColor ?? Colors.green,
+                  label: Text(
+                    "${(index ?? 0) + 1}",
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w400),
+                  ),
                 ),
               ),
             ),
