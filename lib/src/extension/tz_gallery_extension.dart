@@ -20,7 +20,9 @@ extension TzGalleryExtension on TzGalleryController {
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth || ps.hasAccess) {
-      await getFolders();
+      if (folders.value.isEmpty) {
+        await getFolders();
+      }
     } else {
       PhotoManager.openSetting();
       return [];
