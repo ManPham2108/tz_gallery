@@ -20,11 +20,12 @@ extension TzGalleryExtension on TzGalleryController {
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth || ps.hasAccess) {
+      await getFolders();
     } else {
       PhotoManager.openSetting();
       return [];
     }
-
+    if (!context.mounted) return [];
     // Navigate and fetch the callback (list of AssetEntities)
     List<AssetEntity>? callback = await Navigator.push(
       context,
@@ -42,7 +43,7 @@ extension TzGalleryExtension on TzGalleryController {
 
 extension AssetEntityListExt on List<AssetEntity> {
   Future<List<File>> fromAssetEntitiesToFiles() async {
-    List<Future<File?>> fileFutures = this.map((item) => item.file).toList();
+    List<Future<File?>> fileFutures = map((item) => item.file).toList();
 
     // Wait for all file fetch operations to complete in parallel
     List<File?> files = await Future.wait(fileFutures);
@@ -51,5 +52,21 @@ extension AssetEntityListExt on List<AssetEntity> {
     // Here we make sure to map the future results back in their original index order
     List<File> shouldReturn = files.whereType<File>().toList();
     return shouldReturn;
+  }
+}
+
+extension DurationExt on Duration {
+  String get formatDuration {
+    int hours = inHours;
+    int minutes = inMinutes % 60;
+    int seconds = inSeconds % 60;
+    if (hours > 0) {
+      return '$hours:'
+          '${minutes.toString().padLeft(2, '0')}:'
+          '${seconds.toString().padLeft(2, '0')}';
+    } else {
+      return '${minutes.toString().padLeft(2, '0')}:'
+          '${seconds.toString().padLeft(2, '0')}';
+    }
   }
 }

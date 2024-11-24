@@ -18,12 +18,13 @@ class TzGalleryController {
 
   int _page = 0;
   bool outOfContent = false;
-
+  late TzType type;
   TzGalleryController({TzType? type}) {
+    this.type = type ?? TzType.all;
     currentFolder.addListener(() {
       _getEntitiesInFolder();
     });
-    _initialize(type);
+    getFolders();
 
     _loadController.stream
         .debounceTime(const Duration(milliseconds: 500))
@@ -33,10 +34,10 @@ class TzGalleryController {
     });
   }
 
-  Future<void> _initialize(TzType? type) async {
+  Future<void> getFolders() async {
     try {
       // Fetch paths asynchronously
-      final flds = await _galleryRepository.getAssetsPath(type ?? TzType.all);
+      final flds = await _galleryRepository.getAssetsPath(type);
       // Update paths only if it's different from the current value to prevent unnecessary UI updates
       if (folders.value != flds) {
         folders.value = flds;

@@ -11,6 +11,8 @@ class TzGalleryOptions {
   final Text? submitTitle;
   final Color? activeButtonColor;
   final Color? inactiveButtonColor;
+  final Color? badgedColor;
+  final TextStyle? videoDurationTextStyle;
   TzGalleryOptions(
       {this.headerTextStyle,
       this.folderPrimaryTextStyle,
@@ -20,5 +22,7 @@ class TzGalleryOptions {
       this.submitTitle,
       this.activeButtonColor,
       this.inactiveButtonColor,
+      this.badgedColor,
+      this.videoDurationTextStyle,
       this.leading});
 }
