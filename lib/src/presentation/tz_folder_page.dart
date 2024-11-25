@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:tz_gallery/src/widgets/folder_item.dart';
-import 'package:tz_gallery/src/widgets/header_gallery.dart';
-import 'package:tz_gallery/tz_gallery.dart';
+part of '../../tz_gallery.dart';
 
 class TzFolderPage extends StatelessWidget {
   const TzFolderPage({super.key, required this.controller});
@@ -27,7 +24,7 @@ class TzFolderPage extends StatelessWidget {
             ),
             Expanded(
                 child: ValueListenableBuilder(
-              valueListenable: controller.folders,
+              valueListenable: controller._folders,
               builder: (context, value, child) => GridView.builder(
                 itemCount: value.length,
                 padding: const EdgeInsets.all(20),

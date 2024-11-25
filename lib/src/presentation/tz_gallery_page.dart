@@ -1,10 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'package:tz_gallery/src/widgets/gallery_bottom_item.dart';
-import 'package:tz_gallery/src/widgets/gallery_item.dart';
-import 'package:tz_gallery/src/widgets/header_gallery.dart';
-import 'package:tz_gallery/tz_gallery.dart';
+part of '../../tz_gallery.dart';
 
 class TzPickerPage extends StatefulWidget {
   const TzPickerPage(
@@ -37,15 +31,15 @@ class _TzPickerPageState extends State<TzPickerPage> {
                   onNotification: (notification) {
                     if (notification is ScrollEndNotification &&
                         notification.metrics.extentAfter == 0) {
-                      _controller.onLoadMore();
+                      _controller._onLoadMore();
                     }
                     return false;
                   },
                   child: ValueListenableBuilder(
-                      valueListenable: _controller.entities,
+                      valueListenable: _controller._entities,
                       builder: (context, value, child) {
                         return ValueListenableBuilder(
-                            valueListenable: _controller.picked,
+                            valueListenable: _controller._picked,
                             builder: (context, picked, child) =>
                                 GridView.builder(
                                   gridDelegate:
@@ -56,7 +50,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
                                   itemCount: value?.length ?? 0,
                                   itemBuilder: (context, index) => GalleryItem(
                                     onTap: () => onPick(value[index]),
-                                    index: _controller.picked.value.indexWhere(
+                                    index: _controller._picked.value.indexWhere(
                                         (element) =>
                                             element.id == value?[index].id),
                                     asset: value![index],
@@ -64,7 +58,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
                                 ));
                       }))),
           ValueListenableBuilder(
-            valueListenable: _controller.picked,
+            valueListenable: _controller._picked,
             builder: (context, value, child) => Column(
               children: [
                 if (value.isNotEmpty)
@@ -75,7 +69,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
                       child: ListView.separated(
                         itemBuilder: (context, index) => GalleryBottomItem(
                           entity: value[index],
-                          onTap: () => _controller.onRemove(value[index]),
+                          onTap: () => _controller._onRemove(value[index]),
                         ),
                         scrollDirection: Axis.horizontal,
                         itemCount: value.length,
@@ -108,24 +102,24 @@ class _TzPickerPageState extends State<TzPickerPage> {
   }
 
   void onPick(AssetEntity entity) {
-    final index = _controller.picked.value
+    final index = _controller._picked.value
         .indexWhere((element) => element.id == entity.id);
     if (index != -1) {
-      _controller.onRemove(entity);
+      _controller._onRemove(entity);
       return;
     }
-    if (!(_controller.picked.value.length < widget.limit)) return;
-    _controller.onPick(entity);
+    if (!(_controller._picked.value.length < widget.limit)) return;
+    _controller._onPick(entity);
   }
 
   void submit() {
-    if (_controller.picked.value.isEmpty) return;
-    return Navigator.pop(context, _controller.picked.value.toList());
+    if (_controller._picked.value.isEmpty) return;
+    return Navigator.pop(context, _controller._picked.value.toList());
   }
 
   Color get btnColor {
     final options = TzGallery.shared.options;
-    if (_controller.picked.value.isEmpty) {
+    if (_controller._picked.value.isEmpty) {
       return options?.inactiveButtonColor ?? Colors.grey;
     }
     return options?.activeButtonColor ?? Colors.black;

@@ -1,8 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/material.dart';
-import 'package:tz_gallery/src/presentation/tz_folder_page.dart';
-import 'package:tz_gallery/src/widgets/transitions/slide_down.dart';
-import 'package:tz_gallery/tz_gallery.dart';
+part of '../../tz_gallery.dart';
 
 class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
   const TzHeaderGallery({super.key, required this.controller, this.center});
@@ -26,7 +23,7 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 )),
           ]),
-          if (controller.currentFolder.value != null)
+          if (controller._currentFolder.value != null)
             Align(
                 alignment: Alignment.center,
                 child: center ??
@@ -36,7 +33,7 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ValueListenableBuilder(
-                            valueListenable: controller.currentFolder,
+                            valueListenable: controller._currentFolder,
                             builder: (context, value, child) => Text(
                               value?.name ?? "",
                               style:
@@ -60,7 +57,7 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
     AssetPathEntity? callback = await Navigator.push(
         context, SlideDown(TzFolderPage(controller: controller)));
     if (callback != null) {
-      controller.currentFolder.value = callback;
+      controller._currentFolder.value = callback;
     }
   }
 

@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:photo_manager/photo_manager.dart';
-import 'package:tz_gallery/src/presentation/tz_gallery_page.dart';
-import 'package:tz_gallery/tz_gallery.dart';
+part of '../../tz_gallery.dart';
 
 extension TzGalleryExtension on TzGalleryController {
+  ///  [options] your custom styles
+  ///
+  /// [entities] pass your previous selection here, if you want to reload it to gallery
   Future<List<AssetEntity>> openGallery(BuildContext context,
       {int limit = 1,
       TzGalleryOptions? options,
@@ -15,13 +13,13 @@ extension TzGalleryExtension on TzGalleryController {
     }
 
     if (entities.isNotEmpty) {
-      picked.value = entities;
+      _picked.value = entities;
     }
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     if (ps.isAuth || ps.hasAccess) {
-      if (folders.value.isEmpty) {
-        await getFolders();
+      if (_folders.value.isEmpty) {
+        await _getFolders();
       }
     } else {
       PhotoManager.openSetting();
@@ -34,7 +32,7 @@ extension TzGalleryExtension on TzGalleryController {
       MaterialPageRoute(
           builder: (context) => TzPickerPage(limit: limit, controller: this)),
     );
-    picked.value.clear();
+    _picked.value.clear();
     // If no items were selected, return an empty list.
     if (callback == null) return [];
 
