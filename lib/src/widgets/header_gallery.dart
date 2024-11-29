@@ -2,9 +2,11 @@
 part of '../../tz_gallery.dart';
 
 class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
-  const TzHeaderGallery({super.key, required this.controller, this.center});
+  const TzHeaderGallery(
+      {super.key, required this.controller, this.center, this.shouldPop = 1});
   final TzGalleryController controller;
   final Widget? center;
+  final int shouldPop;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -12,14 +14,14 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Row(children: [
             GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () => onClose(context, shouldPop),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: TzGallery.shared.options?.leading ??
-                        const Icon(Icons.arrow_back_ios, size: 24),
+                        const Icon(Icons.close, size: 24),
                   ),
                 )),
           ]),
@@ -59,6 +61,13 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
     if (callback != null) {
       controller._currentFolder.value = callback;
     }
+  }
+
+  void onClose(BuildContext context, int numberPop) {
+    int count = 0;
+    Navigator.popUntil(context, (route) {
+      return count++ == numberPop;
+    });
   }
 
   @override

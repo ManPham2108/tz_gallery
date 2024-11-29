@@ -8,11 +8,20 @@ class TzFolderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TzHeaderGallery(
+        shouldPop: 2,
         controller: controller,
-        center: Text(
-          TzGallery.shared.options?.titleFolderPage ?? "Select folder",
-          style: TzGallery.shared.options?.headerTextStyle ??
-              const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        center: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              TzGallery.shared.options?.titleFolderPage ?? "Select folder",
+              style: TzGallery.shared.options?.headerTextStyle ??
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
+            GestureDetector(
+                onTap: Navigator.of(context).pop,
+                child: const Icon(Icons.keyboard_arrow_up))
+          ],
         ),
       ),
       body: SafeArea(

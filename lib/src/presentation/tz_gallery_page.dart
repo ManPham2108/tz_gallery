@@ -110,6 +110,9 @@ class _TzPickerPageState extends State<TzPickerPage> {
     }
     if (!(_controller._picked.value.length < widget.limit)) return;
     _controller._onPick(entity);
+    if (widget.limit == 1) {
+      submit();
+    }
   }
 
   void submit() {
