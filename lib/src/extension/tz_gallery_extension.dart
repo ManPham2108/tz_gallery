@@ -55,6 +55,19 @@ extension AssetEntityListExt on List<AssetEntity> {
   }
 }
 
+extension AssetEntityExt on AssetEntity {
+  Future<File?> fromAssetEntityToFile() async {
+    File? file = await this.file;
+    file;
+    return file;
+  }
+
+  Future<int?> getFileSize() async {
+    final file = await this.fromAssetEntityToFile();
+    return await file?.length();
+  }
+}
+
 extension DurationExt on Duration {
   String get formatDuration {
     int hours = inHours;
