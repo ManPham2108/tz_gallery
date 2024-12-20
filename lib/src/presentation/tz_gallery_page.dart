@@ -2,9 +2,9 @@ part of '../../tz_gallery.dart';
 
 class TzPickerPage extends StatefulWidget {
   const TzPickerPage(
-      {super.key, required this.limit, required this.controller});
+      {super.key, required this.limitOptions, required this.controller});
   final TzGalleryController controller;
-  final int limit;
+  final TzGalleryLimitOptions limitOptions;
 
   @override
   State<TzPickerPage> createState() => _TzPickerPageState();
@@ -12,9 +12,12 @@ class TzPickerPage extends StatefulWidget {
 
 class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
+  late TzGalleryLimitOptions limitOptions;
+
   @override
   void initState() {
     _controller = widget.controller;
+    limitOptions = widget.limitOptions;
     super.initState();
   }
 
@@ -108,9 +111,16 @@ class _TzPickerPageState extends State<TzPickerPage> {
       _controller._onRemove(entity);
       return;
     }
-    if (!(_controller._picked.value.length < widget.limit)) return;
-    _controller._onPick(entity);
-    if (widget.limit == 1) {
+    if (!(_controller._picked.value.length < limitOptions.limit)) {
+      if (limitOptions.warningMessageToast?.isNotEmpty == true) {
+        Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+      }
+      return;
+    }
+    if (onCheckTypeLimit(entity)) {
+      _controller._onPick(entity);
+    }
+    if (widget.limitOptions.limit == 1) {
       submit();
     }
   }
@@ -118,6 +128,32 @@ class _TzPickerPageState extends State<TzPickerPage> {
   void submit() {
     if (_controller._picked.value.isEmpty) return;
     return Navigator.pop(context, _controller._picked.value.toList());
+  }
+
+  bool onCheckTypeLimit(AssetEntity entity) {
+    if (_controller._type == TzType.all) {
+      final limitImage = limitOptions.limitImage ?? 0;
+      final limitVideo = limitOptions.limitVideo ?? 0;
+
+      if (entity.type == AssetType.image &&
+          limitImage > 0 &&
+          _controller._totalImageType >= limitImage) {
+        if (limitOptions.warningMessageToast?.isNotEmpty == true) {
+          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+        }
+        return false;
+      }
+
+      if (entity.type == AssetType.video &&
+          limitVideo > 0 &&
+          _controller._totalVideoType >= limitVideo) {
+        if (limitOptions.warningMessageToast?.isNotEmpty == true) {
+          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+        }
+        return false;
+      }
+    }
+    return true;
   }
 
   Color get btnColor {

@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _open(BuildContext context) async {
     final List<AssetEntity> data = await controller.openGallery(context,
-        options: TzGalleryOptions(titleFolderPage: "Albums"), limit: 10);
+        options: TzGalleryOptions(titleFolderPage: "Albums"));
     final summary = await data.fromAssetEntitiesToFiles();
     setState(() {
       files = summary;

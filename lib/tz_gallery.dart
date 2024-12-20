@@ -10,6 +10,7 @@ import 'package:tz_gallery/src/repositories/gallery_repository.dart';
 import 'package:tz_gallery/src/widgets/folder_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_bottom_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_item.dart';
+import 'package:tz_gallery/src/widgets/toast.dart';
 import 'package:tz_gallery/src/widgets/transitions/slide_down.dart';
 import 'package:tz_gallery/tz_gallery.dart';
 

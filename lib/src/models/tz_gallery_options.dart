@@ -26,3 +26,21 @@ class TzGalleryOptions {
       this.videoDurationTextStyle,
       this.leading});
 }
+
+class TzGalleryLimitOptions {
+  int limit;
+  int? limitVideo;
+  int? limitImage;
+  String? warningMessageToast;
+
+  TzGalleryLimitOptions({
+    required this.limit,
+    this.limitVideo,
+    this.limitImage,
+    this.warningMessageToast,
+  }) : assert(
+            (limitImage == null && limitVideo == null) ||
+                ((limitImage != null || limitVideo != null) &&
+                    limit == ((limitImage ?? 0) + (limitVideo ?? 0))),
+            "Total limitImage and limitVideo is must equal limit");
+}
