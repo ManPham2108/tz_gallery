@@ -112,7 +112,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
       return;
     }
     if (!(_controller._picked.value.length < limitOptions.limit)) {
-      onShowToast();
+      showWarningToast();
       return;
     }
     if (checkTypeLimit(entity)) {
@@ -143,7 +143,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
     return true;
   }
 
-  void onShowToast() {
+  void showWarningToast() {
     if (limitOptions.warningMessageToast?.isNotEmpty == true) {
       Toast.showToast(context, limitOptions.warningMessageToast ?? "");
     }
@@ -152,7 +152,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
   bool checkOverLimitByType(
       AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
     if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
-      onShowToast();
+      showWarningToast();
       return true;
     }
     return false;
