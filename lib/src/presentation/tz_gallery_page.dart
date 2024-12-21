@@ -115,7 +115,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
       onShowToast();
       return;
     }
-    if (onCheckTypeLimit(entity)) {
+    if (checkTypeLimit(entity)) {
       _controller._onPick(entity);
     }
     if (widget.limitOptions.limit == 1) {
@@ -128,14 +128,14 @@ class _TzPickerPageState extends State<TzPickerPage> {
     return Navigator.pop(context, _controller._picked.value.toList());
   }
 
-  bool onCheckTypeLimit(AssetEntity entity) {
+  bool checkTypeLimit(AssetEntity entity) {
     if (_controller._type == TzType.all) {
-      bool isOverLimit = onCheckOverLimitByType(entity, AssetType.image,
+      bool isOverLimit = checkOverLimitByType(entity, AssetType.image,
           limitOptions.limitImage ?? 0, _controller._totalImageType);
 
       if (isOverLimit) return false;
 
-      isOverLimit = onCheckOverLimitByType(entity, AssetType.video,
+      isOverLimit = checkOverLimitByType(entity, AssetType.video,
           limitOptions.limitVideo ?? 0, _controller._totalVideoType);
 
       if (isOverLimit) return false;
@@ -149,7 +149,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
     }
   }
 
-  bool onCheckOverLimitByType(
+  bool checkOverLimitByType(
       AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
     if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
       onShowToast();
