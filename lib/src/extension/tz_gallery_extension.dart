@@ -18,7 +18,7 @@ extension TzGalleryExtension on TzGalleryController {
 
     if (entities.isNotEmpty) {
       _picked.value = entities;
-      _countMediaType(entities);
+      _countMediaTypeList(entities);
     }
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
@@ -42,7 +42,7 @@ extension TzGalleryExtension on TzGalleryController {
       ),
     );
     _picked.value.clear();
-    _onClearTotolMediaType();
+    _onClearTotalMediaType();
     // If no items were selected, return an empty list.
     if (callback == null) return [];
 

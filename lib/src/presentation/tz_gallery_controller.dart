@@ -76,12 +76,12 @@ class TzGalleryController {
   }
 
   void _onPick(AssetEntity entity) {
-    _countMediaType([entity]);
+    _countMediaTypeList([entity]);
     _picked.value = List.from([..._picked.value, entity]);
   }
 
   void _onRemove(AssetEntity entity) {
-    _countMediaType([entity], isRemoveMedia: true);
+    _countMediaTypeList([entity], isRemoveMedia: true);
     _picked.value.removeWhere((element) => element.id == entity.id);
     _picked.value = List.from(_picked.value);
   }
@@ -91,26 +91,26 @@ class TzGalleryController {
     _outOfContent = false;
   }
 
-  void _countMediaType(List<AssetEntity> entities,
+  void _countMediaTypeList(List<AssetEntity> entities,
       {bool isRemoveMedia = false}) {
     for (AssetEntity e in entities) {
       if (e.type == AssetType.image) {
-        if (isRemoveMedia) {
-          _totalImageType -= 1;
-        } else {
-          _totalImageType += 1;
-        }
+        _totalImageType = _countType(_totalImageType, isRemoveMedia);
       } else if (e.type == AssetType.video) {
-        if (isRemoveMedia) {
-          _totalVideoType -= 1;
-        } else {
-          _totalVideoType += 1;
-        }
+        _totalVideoType = _countType(_totalVideoType, isRemoveMedia);
       }
     }
   }
 
-  void _onClearTotolMediaType() {
+  int _countType(int total, bool isRemoveMedia) {
+    if (isRemoveMedia) {
+      return total - 1;
+    } else {
+      return total + 1;
+    }
+  }
+
+  void _onClearTotalMediaType() {
     _totalImageType = 0;
     _totalVideoType = 0;
   }

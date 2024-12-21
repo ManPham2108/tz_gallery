@@ -112,9 +112,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
       return;
     }
     if (!(_controller._picked.value.length < limitOptions.limit)) {
-      if (limitOptions.warningMessageToast?.isNotEmpty == true) {
-        Toast.showToast(context, limitOptions.warningMessageToast ?? "");
-      }
+      onShowToast();
       return;
     }
     if (onCheckTypeLimit(entity)) {
@@ -132,28 +130,32 @@ class _TzPickerPageState extends State<TzPickerPage> {
 
   bool onCheckTypeLimit(AssetEntity entity) {
     if (_controller._type == TzType.all) {
-      final limitImage = limitOptions.limitImage ?? 0;
-      final limitVideo = limitOptions.limitVideo ?? 0;
+      bool isOverLimit = onCheckOverLimitByType(entity, AssetType.image,
+          limitOptions.limitImage ?? 0, _controller._totalImageType);
 
-      if (entity.type == AssetType.image &&
-          limitImage > 0 &&
-          _controller._totalImageType >= limitImage) {
-        if (limitOptions.warningMessageToast?.isNotEmpty == true) {
-          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
-        }
-        return false;
-      }
+      if (isOverLimit) return false;
 
-      if (entity.type == AssetType.video &&
-          limitVideo > 0 &&
-          _controller._totalVideoType >= limitVideo) {
-        if (limitOptions.warningMessageToast?.isNotEmpty == true) {
-          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
-        }
-        return false;
-      }
+      isOverLimit = onCheckOverLimitByType(entity, AssetType.video,
+          limitOptions.limitVideo ?? 0, _controller._totalVideoType);
+
+      if (isOverLimit) return false;
     }
     return true;
+  }
+
+  void onShowToast() {
+    if (limitOptions.warningMessageToast?.isNotEmpty == true) {
+      Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+    }
+  }
+
+  bool onCheckOverLimitByType(
+      AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
+    if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
+      onShowToast();
+      return true;
+    }
+    return false;
   }
 
   Color get btnColor {
