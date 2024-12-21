@@ -2,9 +2,9 @@ part of '../../tz_gallery.dart';
 
 class TzPickerPage extends StatefulWidget {
   const TzPickerPage(
-      {super.key, required this.limit, required this.controller});
+      {super.key, required this.limitOptions, required this.controller});
   final TzGalleryController controller;
-  final int limit;
+  final TzGalleryLimitOptions limitOptions;
 
   @override
   State<TzPickerPage> createState() => _TzPickerPageState();
@@ -12,9 +12,12 @@ class TzPickerPage extends StatefulWidget {
 
 class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
+  late TzGalleryLimitOptions limitOptions;
+
   @override
   void initState() {
     _controller = widget.controller;
+    limitOptions = widget.limitOptions;
     super.initState();
   }
 
@@ -108,9 +111,14 @@ class _TzPickerPageState extends State<TzPickerPage> {
       _controller._onRemove(entity);
       return;
     }
-    if (!(_controller._picked.value.length < widget.limit)) return;
-    _controller._onPick(entity);
-    if (widget.limit == 1) {
+    if (!(_controller._picked.value.length < limitOptions.limit)) {
+      showWarningToast();
+      return;
+    }
+    if (checkTypeLimit(entity)) {
+      _controller._onPick(entity);
+    }
+    if (widget.limitOptions.limit == 1) {
       submit();
     }
   }
@@ -118,6 +126,36 @@ class _TzPickerPageState extends State<TzPickerPage> {
   void submit() {
     if (_controller._picked.value.isEmpty) return;
     return Navigator.pop(context, _controller._picked.value.toList());
+  }
+
+  bool checkTypeLimit(AssetEntity entity) {
+    if (_controller._type == TzType.all) {
+      bool isOverLimit = checkOverLimitByType(entity, AssetType.image,
+          limitOptions.limitImage ?? 0, _controller._totalImageType);
+
+      if (isOverLimit) return false;
+
+      isOverLimit = checkOverLimitByType(entity, AssetType.video,
+          limitOptions.limitVideo ?? 0, _controller._totalVideoType);
+
+      if (isOverLimit) return false;
+    }
+    return true;
+  }
+
+  void showWarningToast() {
+    if (limitOptions.warningMessageToast?.isNotEmpty == true) {
+      Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+    }
+  }
+
+  bool checkOverLimitByType(
+      AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
+    if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
+      showWarningToast();
+      return true;
+    }
+    return false;
   }
 
   Color get btnColor {

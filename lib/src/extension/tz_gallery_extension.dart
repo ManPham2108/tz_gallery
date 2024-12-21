@@ -4,16 +4,21 @@ extension TzGalleryExtension on TzGalleryController {
   ///  [options] your custom styles
   ///
   /// [entities] pass your previous selection here, if you want to reload it to gallery
-  Future<List<AssetEntity>> openGallery(BuildContext context,
-      {int limit = 1,
-      TzGalleryOptions? options,
-      List<AssetEntity> entities = const []}) async {
+  ///
+  ///  [limitOpions] Only type is all. If you set values ​​for 2 variables limitVideo, limitImage then the sum of 2 variables must equal limit
+  Future<List<AssetEntity>> openGallery(
+    BuildContext context, {
+    TzGalleryOptions? options,
+    TzGalleryLimitOptions? limitOpions,
+    List<AssetEntity> entities = const [],
+  }) async {
     if (options != null) {
       TzGallery.shared.setOptions(options);
     }
 
     if (entities.isNotEmpty) {
       _picked.value = entities;
+      _countMediaTypeList(entities);
     }
 
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
@@ -30,9 +35,14 @@ extension TzGalleryExtension on TzGalleryController {
     List<AssetEntity>? callback = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => TzPickerPage(limit: limit, controller: this)),
+        builder: (context) => TzPickerPage(
+          limitOptions: limitOpions ?? TzGalleryLimitOptions(limit: 1),
+          controller: this,
+        ),
+      ),
     );
     _picked.value.clear();
+    _onClearTotalMediaType();
     // If no items were selected, return an empty list.
     if (callback == null) return [];
 

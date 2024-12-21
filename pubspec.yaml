@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  fluttertoast: ^8.2.10
   photo_manager: ^3.6.2
   photo_manager_image_provider: ^2.2.0
   rxdart: ^0.28.0

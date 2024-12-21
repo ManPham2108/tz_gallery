@@ -13,6 +13,10 @@ class TzGalleryController {
   int _page = 0;
   bool _outOfContent = false;
   late TzType _type;
+
+  int _totalImageType = 0;
+  int _totalVideoType = 0;
+
   TzGalleryController({TzType? type}) {
     _type = type ?? TzType.all;
     _currentFolder.addListener(() {
@@ -72,10 +76,12 @@ class TzGalleryController {
   }
 
   void _onPick(AssetEntity entity) {
+    _countMediaTypeList([entity]);
     _picked.value = List.from([..._picked.value, entity]);
   }
 
   void _onRemove(AssetEntity entity) {
+    _countMediaTypeList([entity], isRemoveMedia: true);
     _picked.value.removeWhere((element) => element.id == entity.id);
     _picked.value = List.from(_picked.value);
   }
@@ -83,6 +89,30 @@ class TzGalleryController {
   void _clearLoadMoreState() {
     _page = 0;
     _outOfContent = false;
+  }
+
+  void _countMediaTypeList(List<AssetEntity> entities,
+      {bool isRemoveMedia = false}) {
+    for (AssetEntity e in entities) {
+      if (e.type == AssetType.image) {
+        _totalImageType = _countType(_totalImageType, isRemoveMedia);
+      } else if (e.type == AssetType.video) {
+        _totalVideoType = _countType(_totalVideoType, isRemoveMedia);
+      }
+    }
+  }
+
+  int _countType(int total, bool isRemoveMedia) {
+    if (isRemoveMedia) {
+      return total - 1;
+    } else {
+      return total + 1;
+    }
+  }
+
+  void _onClearTotalMediaType() {
+    _totalImageType = 0;
+    _totalVideoType = 0;
   }
 
   void dispose() {

@@ -10,6 +10,7 @@ import 'package:tz_gallery/src/repositories/gallery_repository.dart';
 import 'package:tz_gallery/src/widgets/folder_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_bottom_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_item.dart';
+import 'package:tz_gallery/src/widgets/toast.dart';
 import 'package:tz_gallery/src/widgets/transitions/slide_down.dart';
 import 'package:tz_gallery/tz_gallery.dart';
 
@@ -17,7 +18,7 @@ export 'package:photo_manager/src/types/entity.dart';
 export 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 export 'package:tz_gallery/src/common/tz_enum.dart';
 export 'package:tz_gallery/src/models/tz_gallery_options.dart';
-
+export 'package:photo_manager/src/types/thumbnail.dart';
 part 'src/extension/tz_gallery_extension.dart';
 part 'src/presentation/tz_folder_page.dart';
 part 'src/presentation/tz_gallery_controller.dart';
