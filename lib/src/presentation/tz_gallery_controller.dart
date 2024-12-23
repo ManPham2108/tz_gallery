@@ -16,6 +16,7 @@ class TzGalleryController {
 
   int _totalImageType = 0;
   int _totalVideoType = 0;
+  Map<String, int> _entitySizes = {};
 
   TzGalleryController({TzType? type}) {
     _type = type ?? TzType.all;
@@ -120,6 +121,7 @@ class TzGalleryController {
     _folders.dispose();
     _currentFolder.dispose();
     _loadController.close();
+    _entitySizes = {};
     TzGallery.shared.release();
   }
 }

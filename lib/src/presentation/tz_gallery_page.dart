@@ -104,7 +104,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
     );
   }
 
-  void onPick(AssetEntity entity) {
+  Future<void> onPick(AssetEntity entity) async {
     final index = _controller._picked.value
         .indexWhere((element) => element.id == entity.id);
     if (index != -1) {
@@ -112,12 +112,17 @@ class _TzPickerPageState extends State<TzPickerPage> {
       return;
     }
     if (!(_controller._picked.value.length < limitOptions.limit)) {
-      showWarningToast();
+      showWarningToast(ShowTypeToast.typeLimit);
       return;
     }
+
     if (checkTypeLimit(entity)) {
-      _controller._onPick(entity);
+      final isOverSizeLimit = await checkOverSizeLimit(entity);
+      if (!isOverSizeLimit) {
+        _controller._onPick(entity);
+      }
     }
+
     if (widget.limitOptions.limit == 1) {
       submit();
     }
@@ -143,16 +148,62 @@ class _TzPickerPageState extends State<TzPickerPage> {
     return true;
   }
 
-  void showWarningToast() {
-    if (limitOptions.warningMessageToast?.isNotEmpty == true) {
-      Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+  bool isToastNotEmpty(String? toast) => toast?.isNotEmpty == true;
+
+  void showWarningToast(ShowTypeToast type) {
+    switch (type) {
+      case ShowTypeToast.sizeLimit:
+        if (isToastNotEmpty(limitOptions.warningSizeLimitMessageToast)) {
+          Toast.showToast(
+              context, limitOptions.warningSizeLimitMessageToast ?? "");
+        }
+        break;
+      case ShowTypeToast.typeLimit:
+        if (isToastNotEmpty(limitOptions.warningMessageToast)) {
+          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+        }
+        break;
     }
   }
 
   bool checkOverLimitByType(
       AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
     if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
-      showWarningToast();
+      showWarningToast(ShowTypeToast.typeLimit);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> checkOverSizeLimit(AssetEntity entity) async {
+    final sizeLimitImage =
+        Converts.convertMbToBytes(limitOptions.sizeLimitImage ?? 0);
+    final sizeLimitVideo =
+        Converts.convertMbToBytes(limitOptions.sizeLimitVideo ?? 0);
+    if (sizeLimitImage > 0 || sizeLimitVideo > 0) {
+      int? size = _controller._entitySizes[entity.id];
+      if (size == null) {
+        size = await entity.getFileSize() ?? 0;
+        _controller._entitySizes[entity.id] = size;
+      }
+
+      bool status = checkOverSizeLimitByType(
+          entity, AssetType.image, size, sizeLimitImage);
+
+      if (status) return true;
+
+      status = checkOverSizeLimitByType(
+          entity, AssetType.video, size, sizeLimitVideo);
+
+      if (status) return true;
+    }
+    return false;
+  }
+
+  bool checkOverSizeLimitByType(
+      AssetEntity entity, AssetType assetType, int size, int sizeOption) {
+    if (entity.type == assetType && size > 0 && size > sizeOption) {
+      showWarningToast(ShowTypeToast.sizeLimit);
       return true;
     }
     return false;
