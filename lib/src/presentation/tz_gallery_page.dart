@@ -151,18 +151,15 @@ class _TzPickerPageState extends State<TzPickerPage> {
   bool isToastNotEmpty(String? toast) => toast?.isNotEmpty == true;
 
   void showWarningToast(ShowTypeToast type) {
-    switch (type) {
-      case ShowTypeToast.sizeLimit:
-        if (isToastNotEmpty(limitOptions.warningSizeLimitMessageToast)) {
-          Toast.showToast(
-              context, limitOptions.warningSizeLimitMessageToast ?? "");
-        }
-        break;
-      case ShowTypeToast.typeLimit:
-        if (isToastNotEmpty(limitOptions.warningMessageToast)) {
-          Toast.showToast(context, limitOptions.warningMessageToast ?? "");
-        }
-        break;
+    final toastMessages = {
+      ShowTypeToast.sizeLimit: limitOptions.warningSizeLimitMessageToast,
+      ShowTypeToast.typeLimit: limitOptions.warningMessageToast,
+    };
+
+    final message = toastMessages[type];
+
+    if (isToastNotEmpty(message)) {
+      Toast.showToast(context, message ?? "");
     }
   }
 
@@ -176,36 +173,28 @@ class _TzPickerPageState extends State<TzPickerPage> {
   }
 
   Future<bool> checkOverSizeLimit(AssetEntity entity) async {
-    final sizeLimitImage =
-        Converts.convertMbToBytes(limitOptions.sizeLimitImage ?? 0);
-    final sizeLimitVideo =
-        Converts.convertMbToBytes(limitOptions.sizeLimitVideo ?? 0);
-    if (sizeLimitImage > 0 || sizeLimitVideo > 0) {
+    final sizeLimitMap = {
+      AssetType.image:
+          Converts.convertMbToBytes(limitOptions.sizeLimitImage ?? 0),
+      AssetType.video:
+          Converts.convertMbToBytes(limitOptions.sizeLimitVideo ?? 0)
+    };
+
+    final sizeLimitByType = sizeLimitMap[entity.type] ?? 0;
+
+    if (sizeLimitByType > 0) {
       int? size = _controller._entitySizes[entity.id];
       if (size == null) {
         size = await entity.getFileSize() ?? 0;
         _controller._entitySizes[entity.id] = size;
       }
 
-      bool status = checkOverSizeLimitByType(
-          entity, AssetType.image, size, sizeLimitImage);
-
-      if (status) return true;
-
-      status = checkOverSizeLimitByType(
-          entity, AssetType.video, size, sizeLimitVideo);
-
-      if (status) return true;
+      if (size > sizeLimitByType) {
+        showWarningToast(ShowTypeToast.sizeLimit);
+        return true;
+      }
     }
-    return false;
-  }
 
-  bool checkOverSizeLimitByType(
-      AssetEntity entity, AssetType assetType, int size, int sizeOption) {
-    if (entity.type == assetType && sizeOption > 0 && size > sizeOption) {
-      showWarningToast(ShowTypeToast.sizeLimit);
-      return true;
-    }
     return false;
   }
 
