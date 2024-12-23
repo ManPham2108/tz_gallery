@@ -202,7 +202,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
 
   bool checkOverSizeLimitByType(
       AssetEntity entity, AssetType assetType, int size, int sizeOption) {
-    if (entity.type == assetType && size > 0 && size > sizeOption) {
+    if (entity.type == assetType && sizeOption > 0 && size > sizeOption) {
       showWarningToast(ShowTypeToast.sizeLimit);
       return true;
     }
