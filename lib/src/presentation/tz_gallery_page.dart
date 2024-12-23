@@ -104,7 +104,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
     );
   }
 
-  void onPick(AssetEntity entity) {
+  Future<void> onPick(AssetEntity entity) async {
     final index = _controller._picked.value
         .indexWhere((element) => element.id == entity.id);
     if (index != -1) {
@@ -112,12 +112,17 @@ class _TzPickerPageState extends State<TzPickerPage> {
       return;
     }
     if (!(_controller._picked.value.length < limitOptions.limit)) {
-      showWarningToast();
+      showWarningToast(ShowTypeToast.typeLimit);
       return;
     }
+
     if (checkTypeLimit(entity)) {
-      _controller._onPick(entity);
+      final isOverSizeLimit = await checkOverSizeLimit(entity);
+      if (!isOverSizeLimit) {
+        _controller._onPick(entity);
+      }
     }
+
     if (widget.limitOptions.limit == 1) {
       submit();
     }
@@ -143,18 +148,53 @@ class _TzPickerPageState extends State<TzPickerPage> {
     return true;
   }
 
-  void showWarningToast() {
-    if (limitOptions.warningMessageToast?.isNotEmpty == true) {
-      Toast.showToast(context, limitOptions.warningMessageToast ?? "");
+  bool isToastNotEmpty(String? toast) => toast?.isNotEmpty == true;
+
+  void showWarningToast(ShowTypeToast type) {
+    final toastMessages = {
+      ShowTypeToast.sizeLimit: limitOptions.warningSizeLimitMessageToast,
+      ShowTypeToast.typeLimit: limitOptions.warningMessageToast,
+    };
+
+    final message = toastMessages[type];
+
+    if (isToastNotEmpty(message)) {
+      Toast.showToast(context, message ?? "");
     }
   }
 
   bool checkOverLimitByType(
       AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
     if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
-      showWarningToast();
+      showWarningToast(ShowTypeToast.typeLimit);
       return true;
     }
+    return false;
+  }
+
+  Future<bool> checkOverSizeLimit(AssetEntity entity) async {
+    final sizeLimitMap = {
+      AssetType.image:
+          Converts.convertMbToBytes(limitOptions.sizeLimitImage ?? 0),
+      AssetType.video:
+          Converts.convertMbToBytes(limitOptions.sizeLimitVideo ?? 0)
+    };
+
+    final sizeLimitByType = sizeLimitMap[entity.type] ?? 0;
+
+    if (sizeLimitByType > 0) {
+      int? size = _controller._entitySizes[entity.id];
+      if (size == null) {
+        size = await entity.getFileSize() ?? 0;
+        _controller._entitySizes[entity.id] = size;
+      }
+
+      if (size > sizeLimitByType) {
+        showWarningToast(ShowTypeToast.sizeLimit);
+        return true;
+      }
+    }
+
     return false;
   }
 

@@ -32,12 +32,18 @@ class TzGalleryLimitOptions {
   int? limitVideo;
   int? limitImage;
   String? warningMessageToast;
+  int? sizeLimitImage;
+  int? sizeLimitVideo;
+  String? warningSizeLimitMessageToast;
 
   TzGalleryLimitOptions({
     required this.limit,
     this.limitVideo,
     this.limitImage,
     this.warningMessageToast,
+    this.warningSizeLimitMessageToast,
+    this.sizeLimitImage,
+    this.sizeLimitVideo,
   }) : assert(
             (limitImage == null && limitVideo == null) ||
                 ((limitImage != null || limitVideo != null) &&
