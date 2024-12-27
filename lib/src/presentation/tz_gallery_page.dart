@@ -136,12 +136,12 @@ class _TzPickerPageState extends State<TzPickerPage> {
   bool checkTypeLimit(AssetEntity entity) {
     if (_controller._type == TzType.all) {
       bool isOverLimit = checkOverLimitByType(entity, AssetType.image,
-          limitOptions.limitImage ?? 0, _controller._totalImageType);
+          limitOptions.limitImage, _controller._totalImageType);
 
       if (isOverLimit) return false;
 
       isOverLimit = checkOverLimitByType(entity, AssetType.video,
-          limitOptions.limitVideo ?? 0, _controller._totalVideoType);
+          limitOptions.limitVideo, _controller._totalVideoType);
 
       if (isOverLimit) return false;
     }
@@ -164,8 +164,8 @@ class _TzPickerPageState extends State<TzPickerPage> {
   }
 
   bool checkOverLimitByType(
-      AssetEntity entity, AssetType assetType, int limit, int currentTotal) {
-    if (entity.type == assetType && limit > 0 && currentTotal >= limit) {
+      AssetEntity entity, AssetType assetType, int? limit, int currentTotal) {
+    if (entity.type == assetType && limit != null && currentTotal >= limit) {
       showWarningToast(ShowTypeToast.typeLimit);
       return true;
     }
