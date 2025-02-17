@@ -9,7 +9,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:tz_gallery/src/common/converts.dart';
 import 'package:tz_gallery/src/repositories/gallery_repository.dart';
 import 'package:tz_gallery/src/widgets/folder_item.dart';
-import 'package:tz_gallery/src/widgets/gallery_bottom_item.dart';
 import 'package:tz_gallery/src/widgets/gallery_item.dart';
 import 'package:tz_gallery/src/widgets/toast.dart';
 import 'package:tz_gallery/src/widgets/transitions/slide_down.dart';
@@ -28,7 +27,7 @@ part 'src/widgets/header_gallery.dart';
 
 class TzGallery {
   TzGalleryOptions? _options;
-
+  TzGalleryLimitOptions? _limitOptions;
   // Private constructor
   TzGallery._internal();
 
@@ -43,10 +42,18 @@ class TzGallery {
     _options ??= options;
   }
 
+  // Set limitOptions once, using null-aware assignment
+
+  void setLimitOptions(TzGalleryLimitOptions limitOptions) {
+    _limitOptions ??= limitOptions;
+  }
+
   void release() {
     _options = null;
+    _limitOptions = null;
   }
 
   // Getter for options
   TzGalleryOptions? get options => _options;
+  TzGalleryLimitOptions get limitOptions => _limitOptions!;
 }

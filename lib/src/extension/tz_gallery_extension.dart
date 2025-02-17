@@ -5,16 +5,19 @@ extension TzGalleryExtension on TzGalleryController {
   ///
   /// [entities] pass your previous selection here, if you want to reload it to gallery
   ///
-  ///  [limitOpions] Only type is all. If you set values ​​for 2 variables limitVideo, limitImage then the sum of 2 variables must equal limit
+  ///  [limitOptions] Only type is all. If you set values ​​for 2 variables limitVideo, limitImage then the sum of 2 variables must equal limit
   Future<List<AssetEntity>> openGallery(
     BuildContext context, {
     TzGalleryOptions? options,
-    TzGalleryLimitOptions? limitOpions,
+    TzGalleryLimitOptions? limitOptions,
     List<AssetEntity> entities = const [],
   }) async {
     if (options != null) {
       TzGallery.shared.setOptions(options);
     }
+
+    TzGallery.shared
+        .setLimitOptions(limitOptions ?? TzGalleryLimitOptions(limit: 1));
 
     if (entities.isNotEmpty) {
       _picked.value = entities;
@@ -36,7 +39,6 @@ extension TzGalleryExtension on TzGalleryController {
       context,
       MaterialPageRoute(
         builder: (context) => TzPickerPage(
-          limitOptions: limitOpions ?? TzGalleryLimitOptions(limit: 1),
           controller: this,
         ),
       ),
@@ -73,7 +75,7 @@ extension AssetEntityExt on AssetEntity {
   }
 
   Future<int?> getFileSize() async {
-    final file = await this.fromAssetEntityToFile();
+    final file = await fromAssetEntityToFile();
     return await file?.length();
   }
 }

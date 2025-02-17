@@ -7,6 +7,8 @@ class TzFolderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          TzGallery.shared.options?.backgroundColor ?? Colors.white,
       appBar: TzHeaderGallery(
         shouldPop: 2,
         controller: controller,
@@ -20,7 +22,11 @@ class TzFolderPage extends StatelessWidget {
             ),
             GestureDetector(
                 onTap: Navigator.of(context).pop,
-                child: const Icon(Icons.keyboard_arrow_up))
+                child: Transform.flip(
+                  flipY: true,
+                  child: TzGallery.shared.options?.arrowDownIcon ??
+                      const Icon(Icons.keyboard_arrow_down),
+                ))
           ],
         ),
       ),

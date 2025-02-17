@@ -46,7 +46,8 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.keyboard_arrow_down)
+                          TzGallery.shared.options?.arrowDownIcon ??
+                              const Icon(Icons.keyboard_arrow_down)
                         ],
                       ),
                     ))

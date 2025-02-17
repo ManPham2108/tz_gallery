@@ -1,10 +1,8 @@
 part of '../../tz_gallery.dart';
 
 class TzPickerPage extends StatefulWidget {
-  const TzPickerPage(
-      {super.key, required this.limitOptions, required this.controller});
+  const TzPickerPage({super.key, required this.controller});
   final TzGalleryController controller;
-  final TzGalleryLimitOptions limitOptions;
 
   @override
   State<TzPickerPage> createState() => _TzPickerPageState();
@@ -12,18 +10,19 @@ class TzPickerPage extends StatefulWidget {
 
 class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
-  late TzGalleryLimitOptions limitOptions;
+  TzGalleryLimitOptions get limitOptions => TzGallery.shared.limitOptions;
 
   @override
   void initState() {
     _controller = widget.controller;
-    limitOptions = widget.limitOptions;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          TzGallery.shared.options?.backgroundColor ?? Colors.white,
       appBar: TzHeaderGallery(
         controller: _controller,
       ),
@@ -61,44 +60,22 @@ class _TzPickerPageState extends State<TzPickerPage> {
                                 ));
                       }))),
           ValueListenableBuilder(
-            valueListenable: _controller._picked,
-            builder: (context, value, child) => Column(
-              children: [
-                if (value.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: SizedBox(
-                      height: 80,
-                      child: ListView.separated(
-                        itemBuilder: (context, index) => GalleryBottomItem(
-                          entity: value[index],
-                          onTap: () => _controller._onRemove(value[index]),
-                        ),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: value.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 8),
-                      ),
+              valueListenable: _controller._picked,
+              builder: (context, value, child) => SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: FilledButton(
+                          style: FilledButton.styleFrom(
+                              backgroundColor: btnColor,
+                              splashFactory: NoSplash.splashFactory,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          onPressed: submit,
+                          child: TzGallery.shared.options?.submitTitle ??
+                              const Text("Next")),
                     ),
-                  ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: FilledButton(
-                        style: FilledButton.styleFrom(
-                            backgroundColor: btnColor,
-                            splashFactory: NoSplash.splashFactory,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                        onPressed: submit,
-                        child: TzGallery.shared.options?.submitTitle ??
-                            const Text("Next")),
-                  ),
-                )
-              ],
-            ),
-          ),
+                  )),
         ]),
       ),
     );
@@ -123,9 +100,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
       }
     }
 
-    if (widget.limitOptions.limit == 1) {
-      submit();
-    }
+    if (TzGallery.shared.limitOptions.limit == 1) submit();
   }
 
   void submit() {
