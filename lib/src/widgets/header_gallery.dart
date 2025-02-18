@@ -17,22 +17,24 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                 onTap: () => onClose(context, shouldPop),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: TzGallery.shared.options?.leading ??
-                        const Icon(Icons.close, size: 24),
+                        const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                   ),
                 )),
           ]),
           if (controller._currentFolder.value != null)
-            Align(
+            Container(
+                padding: const EdgeInsets.only(bottom: 6.5),
                 alignment: Alignment.center,
                 child: center ??
                     GestureDetector(
                       onTap: () => onSelectFolder(context),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ValueListenableBuilder(
                             valueListenable: controller._currentFolder,
@@ -45,9 +47,21 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                                           fontSize: 16),
                             ),
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 8),
                           TzGallery.shared.options?.arrowDownIcon ??
-                              const Icon(Icons.keyboard_arrow_down)
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(
+                                    width: 1.5,
+                                    color: const Color(0xFF141415),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 16,
+                                ),
+                              )
                         ],
                       ),
                     ))

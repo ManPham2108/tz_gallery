@@ -11,6 +11,7 @@ class TzPickerPage extends StatefulWidget {
 class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
   TzGalleryLimitOptions get limitOptions => TzGallery.shared.limitOptions;
+  bool get isMultiMedia => limitOptions.limit > 1;
 
   @override
   void initState() {
@@ -20,6 +21,7 @@ class _TzPickerPageState extends State<TzPickerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomButton = MediaQuery.of(context).viewPadding.bottom + 6;
     return Scaffold(
       backgroundColor:
           TzGallery.shared.options?.backgroundColor ?? Colors.white,
@@ -27,8 +29,9 @@ class _TzPickerPageState extends State<TzPickerPage> {
         controller: _controller,
       ),
       body: SafeArea(
-        child: Column(children: [
-          Expanded(
+        bottom: false,
+        child: Stack(children: [
+          Positioned.fill(
               child: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
                     if (notification is ScrollEndNotification &&
@@ -41,41 +44,64 @@ class _TzPickerPageState extends State<TzPickerPage> {
                       valueListenable: _controller._entities,
                       builder: (context, value, child) {
                         return ValueListenableBuilder(
-                            valueListenable: _controller._picked,
-                            builder: (context, picked, child) =>
-                                GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          crossAxisSpacing: 2,
-                                          mainAxisSpacing: 2),
-                                  itemCount: value?.length ?? 0,
-                                  itemBuilder: (context, index) => GalleryItem(
-                                    onTap: () => onPick(value[index]),
-                                    index: _controller._picked.value.indexWhere(
-                                        (element) =>
-                                            element.id == value?[index].id),
-                                    asset: value![index],
-                                  ),
-                                ));
+                          valueListenable: _controller._picked,
+                          builder: (context, picked, child) => GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 2,
+                                    mainAxisSpacing: 2),
+                            itemCount: value?.length ?? 0,
+                            itemBuilder: (context, index) => GalleryItem(
+                              onTap: () => onShowMedia(value[index]),
+                              onTapChoose: () => onPick(value[index]),
+                              index: _controller._picked.value.indexWhere(
+                                  (element) => element.id == value?[index].id),
+                              asset: value![index],
+                              showMultiChoose: isMultiMedia,
+                            ),
+                            padding: EdgeInsets.only(
+                                bottom: 48 + bottomButton + 20 + 2),
+                          ),
+                        );
                       }))),
-          ValueListenableBuilder(
-              valueListenable: _controller._picked,
-              builder: (context, value, child) => SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: FilledButton(
-                          style: FilledButton.styleFrom(
-                              backgroundColor: btnColor,
-                              splashFactory: NoSplash.splashFactory,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                          onPressed: submit,
-                          child: TzGallery.shared.options?.submitTitle ??
-                              const Text("Next")),
-                    ),
-                  )),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ValueListenableBuilder(
+                valueListenable: _controller._picked,
+                builder: (context, value, child) => ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20)
+                              .copyWith(bottom: bottomButton),
+                          child: SizedBox(
+                            height: 48,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  backgroundColor: btnColor,
+                                  splashFactory: NoSplash.splashFactory,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12))),
+                              onPressed: submit,
+                              child: TzGallery.shared.options?.submitTitle ??
+                                  Text(
+                                    "Upload",
+                                    style: TextStyle(
+                                      color: btnTextColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+          ),
         ]),
       ),
     );
@@ -101,6 +127,30 @@ class _TzPickerPageState extends State<TzPickerPage> {
     }
 
     if (TzGallery.shared.limitOptions.limit == 1) submit();
+  }
+
+  void onShowMedia(AssetEntity entity) {
+    if (!isMultiMedia) {
+      onPick(entity);
+      return;
+    }
+    final isSelected = _controller._picked.value
+            .indexWhere((element) => element.id == entity.id) !=
+        -1;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => TZMediaDetailPage(
+                entity: entity,
+                isSelected: isSelected,
+              )),
+    ).then(
+      (value) {
+        if (value != null) {
+          onPick(entity);
+        }
+      },
+    );
   }
 
   void submit() {
@@ -176,8 +226,15 @@ class _TzPickerPageState extends State<TzPickerPage> {
   Color get btnColor {
     final options = TzGallery.shared.options;
     if (_controller._picked.value.isEmpty) {
-      return options?.inactiveButtonColor ?? Colors.grey;
+      return options?.inactiveButtonColor ?? const Color(0XFFE3E9DE);
     }
-    return options?.activeButtonColor ?? Colors.black;
+    return options?.activeButtonColor ?? const Color(0XFF428407);
+  }
+
+  Color get btnTextColor {
+    if (_controller._picked.value.isEmpty) {
+      return const Color(0XFFB9BDC1);
+    }
+    return Colors.white;
   }
 }

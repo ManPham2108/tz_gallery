@@ -12,22 +12,37 @@ class TzFolderPage extends StatelessWidget {
       appBar: TzHeaderGallery(
         shouldPop: 2,
         controller: controller,
-        center: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              TzGallery.shared.options?.titleFolderPage ?? "Select folder",
-              style: TzGallery.shared.options?.headerTextStyle ??
-                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-            ),
-            GestureDetector(
-                onTap: Navigator.of(context).pop,
+        center: GestureDetector(
+          onTap: Navigator.of(context).pop,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                TzGallery.shared.options?.titleFolderPage ?? "Select folder",
+                style: TzGallery.shared.options?.headerTextStyle ??
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                  child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    width: 1.5,
+                    color: const Color(0xFF141415),
+                  ),
+                ),
                 child: Transform.flip(
                   flipY: true,
                   child: TzGallery.shared.options?.arrowDownIcon ??
-                      const Icon(Icons.keyboard_arrow_down),
-                ))
-          ],
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                      ),
+                ),
+              ))
+            ],
+          ),
         ),
       ),
       body: SafeArea(
