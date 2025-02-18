@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tz_gallery/src/common/color.dart';
 
 class ChooseButtonWidget extends StatelessWidget {
   final bool isSelect;
@@ -11,12 +12,12 @@ class ChooseButtonWidget extends StatelessWidget {
       height: 18,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
-        color: isSelect ? const Color(0XFF4D970C) : Colors.transparent,
+        color: isSelect ? ColorCommon.color_4D970C : Colors.transparent,
         border: isSelect
             ? null
             : Border.all(
                 width: 1.5,
-                color: const Color(0XFFD1D1D3),
+                color: ColorCommon.color_D1D1D3,
               ),
       ),
     );

@@ -226,14 +226,15 @@ class _TzPickerPageState extends State<TzPickerPage> {
   Color get btnColor {
     final options = TzGallery.shared.options;
     if (_controller._picked.value.isEmpty) {
-      return options?.inactiveButtonColor ?? const Color(0XFFE3E9DE);
+      return options?.inactiveButtonColor ?? ColorCommon.color_E3E9DE;
     }
-    return options?.activeButtonColor ?? const Color(0XFF428407);
+
+    return options?.activeButtonColor ?? ColorCommon.color_428407;
   }
 
   Color get btnTextColor {
     if (_controller._picked.value.isEmpty) {
-      return const Color(0XFFB9BDC1);
+      return ColorCommon.color_B9BDC1;
     }
     return Colors.white;
   }

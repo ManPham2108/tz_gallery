@@ -1,7 +1,6 @@
 library tz_gallery;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -9,6 +8,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tz_gallery/src/common/color.dart';
 import 'package:tz_gallery/src/common/converts.dart';
 import 'package:tz_gallery/src/presentation/tz_media_detail_page.dart';
 import 'package:tz_gallery/src/repositories/gallery_repository.dart';

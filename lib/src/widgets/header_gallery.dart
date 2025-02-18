@@ -54,7 +54,7 @@ class TzHeaderGallery extends StatelessWidget implements PreferredSizeWidget {
                                   borderRadius: BorderRadius.circular(100),
                                   border: Border.all(
                                     width: 1.5,
-                                    color: const Color(0xFF141415),
+                                    color: ColorCommon.color_141415,
                                   ),
                                 ),
                                 child: const Icon(

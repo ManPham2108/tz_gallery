@@ -29,7 +29,7 @@ class TzFolderPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
                     width: 1.5,
-                    color: const Color(0xFF141415),
+                    color: ColorCommon.color_141415,
                   ),
                 ),
                 child: Transform.flip(
@@ -49,7 +49,7 @@ class TzFolderPage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              color: const Color(0xffb1b1b180),
+              color: ColorCommon.color_B1B1B180,
               height: .5,
             ),
             Expanded(
