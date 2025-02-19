@@ -9,4 +9,5 @@ class ColorCommon {
   static const Color color_4D970C = Color(0XFF4D970C);
   static const Color color_D1D1D3 = Color(0XFFD1D1D3);
   static const Color color_F4F5F6 = Color(0xFFF4F5F6);
+  static const Color color_F2F2F6 = Color(0xFFF2F2F6);
 }
