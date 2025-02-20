@@ -27,7 +27,7 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   final ValueNotifier<bool> _isPlayingVideo = ValueNotifier(false);
-  final ValueNotifier<bool> _isTurnOnVolume = ValueNotifier(false);
+  final ValueNotifier<bool> _isTurnOnVolume = ValueNotifier(true);
   final ValueNotifier<bool> _isDraggSlider = ValueNotifier(false);
   final ValueNotifier<double> _currentProgress = ValueNotifier(0.0);
 
@@ -86,7 +86,7 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
     }
   }
 
-  void _tunrVolume() {
+  void _turnVolume() {
     if (_isTurnOnVolume.value == true) {
       _videoPlayerController?.setVolume(0.0);
       _isTurnOnVolume.value = false;
@@ -240,9 +240,9 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
             valueListenable: _isTurnOnVolume,
             builder: (BuildContext context, bool value, Widget? child) {
               return GestureDetector(
-                onTap: _tunrVolume,
+                onTap: _turnVolume,
                 child: Icon(
-                  value ? Icons.volume_off_sharp : Icons.volume_up,
+                  value ? Icons.volume_up : Icons.volume_off_sharp,
                   color: Colors.white,
                 ),
               );
