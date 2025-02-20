@@ -200,7 +200,7 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
 
   Widget _buildCustomControlsVideo() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 12),
       child: Column(
         spacing: 14,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -209,10 +209,7 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
             valueListenable: _isDraggSlider,
             builder: (context, value, child) {
               if (value) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _buildTimeLine(),
-                );
+                return _buildTimeLine();
               }
               return _buildControls();
             },
@@ -275,33 +272,30 @@ class _TZMediaDetailPageState extends State<TZMediaDetailPage> {
           thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6)),
       child: SmoothVideoProgress(
         controller: _videoPlayerController!,
-        builder: (context, progress, duration, child) => SizedBox(
-          height: 2,
-          child: Slider(
-            value: progress.inMilliseconds.toDouble(),
-            max: duration.inMilliseconds.toDouble(),
-            onChangeStart: (double value) {
-              _isDraggSlider.value = true;
-              _videoPlayerController?.pause();
-            },
-            onChangeEnd: (value) {
-              _isDraggSlider.value = false;
-              _videoPlayerController?.play();
-            },
-            onChanged: (value) {
-              if (_isDraggSlider.value) {
-                _currentProgress.value = value / 1000;
-              }
-              _videoPlayerController?.seekTo(
-                Duration(
-                  milliseconds: value.toInt(),
-                ),
-              );
-            },
-            min: 0,
-            activeColor: ColorCommon.color_F4F5F6,
-            inactiveColor: ColorCommon.color_F2F2F6.withValues(alpha: .4),
-          ),
+        builder: (context, progress, duration, child) => Slider(
+          value: progress.inMilliseconds.toDouble(),
+          max: duration.inMilliseconds.toDouble(),
+          onChangeStart: (double value) {
+            _isDraggSlider.value = true;
+            _videoPlayerController?.pause();
+          },
+          onChangeEnd: (value) {
+            _isDraggSlider.value = false;
+            _videoPlayerController?.play();
+          },
+          onChanged: (value) {
+            if (_isDraggSlider.value) {
+              _currentProgress.value = value / 1000;
+            }
+            _videoPlayerController?.seekTo(
+              Duration(
+                milliseconds: value.toInt(),
+              ),
+            );
+          },
+          min: 0,
+          activeColor: ColorCommon.color_F4F5F6,
+          inactiveColor: ColorCommon.color_F2F2F6.withValues(alpha: .4),
         ),
       ),
     );
