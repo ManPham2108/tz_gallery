@@ -20,6 +20,12 @@ class _TzPickerPageState extends State<TzPickerPage> {
   }
 
   @override
+  void dispose() {
+    TzGallery.shared.release();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bottomButton = MediaQuery.of(context).viewPadding.bottom + 6;
     return Scaffold(
