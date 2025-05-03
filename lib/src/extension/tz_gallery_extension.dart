@@ -70,12 +70,16 @@ extension AssetEntityListExt on List<AssetEntity> {
 extension AssetEntityExt on AssetEntity {
   Future<File?> fromAssetEntityToFile() async {
     File? file = await this.file;
-    file;
+    return file;
+  }
+
+  Future<File?> fromAssetEntityToOriginFile() async {
+    File? file = await originFile;
     return file;
   }
 
   Future<int?> getFileSize() async {
-    final file = await fromAssetEntityToFile();
+    final file = await fromAssetEntityToOriginFile();
     return await file?.length();
   }
 }
