@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tz_gallery/src/common/color.dart';
 
 FToast? fToast;
 Duration toastDuration = const Duration(seconds: 2);
@@ -19,7 +20,7 @@ class Toast extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 12),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
           decoration: const BoxDecoration(
-            color: Color(0xFF141415),
+            color: ColorCommon.color_141415,
             borderRadius: BorderRadius.all(Radius.circular(100)),
           ),
           child: Text(
@@ -27,7 +28,7 @@ class Toast extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: Platform.isIOS ? FontWeight.w600 : FontWeight.w500,
-              color: const Color(0xFFF4F5F6),
+              color: ColorCommon.color_F4F5F6,
             ),
             textAlign: TextAlign.center,
           ),

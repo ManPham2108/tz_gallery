@@ -1,10 +1,8 @@
 part of '../../tz_gallery.dart';
 
 class TzPickerPage extends StatefulWidget {
-  const TzPickerPage(
-      {super.key, required this.limitOptions, required this.controller});
+  const TzPickerPage({super.key, required this.controller});
   final TzGalleryController controller;
-  final TzGalleryLimitOptions limitOptions;
 
   @override
   State<TzPickerPage> createState() => _TzPickerPageState();
@@ -12,24 +10,37 @@ class TzPickerPage extends StatefulWidget {
 
 class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
-  late TzGalleryLimitOptions limitOptions;
+  TzGalleryLimitOptions get limitOptions => TzGallery.shared.limitOptions;
+  bool get isMultiMedia => limitOptions.limit > 1;
+  bool get showCameraTile =>
+      _controller._type != TzType.video &&
+      TzGallery.shared.options?.onCameraCapture != null;
 
   @override
   void initState() {
     _controller = widget.controller;
-    limitOptions = widget.limitOptions;
     super.initState();
   }
 
   @override
+  void dispose() {
+    TzGallery.shared.release();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bottomButton = MediaQuery.of(context).viewPadding.bottom + 6;
     return Scaffold(
+      backgroundColor:
+          TzGallery.shared.options?.backgroundColor ?? Colors.white,
       appBar: TzHeaderGallery(
         controller: _controller,
       ),
       body: SafeArea(
-        child: Column(children: [
-          Expanded(
+        bottom: false,
+        child: Stack(children: [
+          Positioned.fill(
               child: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
                     if (notification is ScrollEndNotification &&
@@ -42,66 +53,106 @@ class _TzPickerPageState extends State<TzPickerPage> {
                       valueListenable: _controller._entities,
                       builder: (context, value, child) {
                         return ValueListenableBuilder(
-                            valueListenable: _controller._picked,
-                            builder: (context, picked, child) =>
-                                GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          crossAxisSpacing: 2,
-                                          mainAxisSpacing: 2),
-                                  itemCount: value?.length ?? 0,
-                                  itemBuilder: (context, index) => GalleryItem(
-                                    onTap: () => onPick(value[index]),
-                                    index: _controller._picked.value.indexWhere(
-                                        (element) =>
-                                            element.id == value?[index].id),
-                                    asset: value![index],
-                                  ),
-                                ));
+                          valueListenable: _controller._picked,
+                          builder: (context, picked, child) {
+                            final assets = value ?? const <AssetEntity>[];
+                            final cameraOffset = showCameraTile ? 1 : 0;
+                            return GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 2,
+                                      mainAxisSpacing: 2),
+                              itemCount: assets.length + cameraOffset,
+                              itemBuilder: (context, index) {
+                                if (showCameraTile && index == 0) {
+                                  return _buildCameraTile();
+                                }
+                                final asset = assets[index - cameraOffset];
+                                return GalleryItem(
+                                  onTap: () => onShowMedia(asset),
+                                  onTapChoose: () => onPick(asset),
+                                  index: _controller._picked.value.indexWhere(
+                                      (element) => element.id == asset.id),
+                                  asset: asset,
+                                  showMultiChoose: isMultiMedia,
+                                );
+                              },
+                              padding: EdgeInsets.only(
+                                  bottom: 48 + bottomButton + 20 + 2),
+                            );
+                          },
+                        );
                       }))),
-          ValueListenableBuilder(
-            valueListenable: _controller._picked,
-            builder: (context, value, child) => Column(
-              children: [
-                if (value.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: SizedBox(
-                      height: 80,
-                      child: ListView.separated(
-                        itemBuilder: (context, index) => GalleryBottomItem(
-                          entity: value[index],
-                          onTap: () => _controller._onRemove(value[index]),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ValueListenableBuilder(
+                valueListenable: _controller._picked,
+                builder: (context, value, child) => ClipRRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20)
+                              .copyWith(bottom: bottomButton),
+                          child: SizedBox(
+                            height: 48,
+                            child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  backgroundColor: btnColor,
+                                  splashFactory: NoSplash.splashFactory,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12))),
+                              onPressed: submit,
+                              child: TzGallery.shared.options?.submitTitle ??
+                                  Text(
+                                    "Upload",
+                                    style: TextStyle(
+                                      color: btnTextColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                            ),
+                          ),
                         ),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: value.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 8),
                       ),
-                    ),
-                  ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: FilledButton(
-                        style: FilledButton.styleFrom(
-                            backgroundColor: btnColor,
-                            splashFactory: NoSplash.splashFactory,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                        onPressed: submit,
-                        child: TzGallery.shared.options?.submitTitle ??
-                            const Text("Next")),
-                  ),
-                )
-              ],
-            ),
+                    )),
           ),
         ]),
       ),
     );
+  }
+
+  Widget _buildCameraTile() {
+    return Material(
+      color: Colors.black12,
+      child: InkWell(
+        key: const ValueKey('tz_gallery_camera_tile'),
+        onTap: onCameraCapture,
+        child: const Center(
+          child: Icon(Icons.camera_alt_outlined, size: 36),
+        ),
+      ),
+    );
+  }
+
+  Future<void> onCameraCapture() async {
+    if (_controller._picked.value.length >= limitOptions.limit) {
+      showWarningToast(ShowTypeToast.typeLimit);
+      return;
+    }
+
+    final entity = await TzGallery.shared.options?.onCameraCapture?.call();
+    if (!mounted || entity == null) return;
+
+    final entities = _controller._entities.value ?? const <AssetEntity>[];
+    if (!entities.any((item) => item.id == entity.id)) {
+      _controller._entities.value = [entity, ...entities];
+    }
+    await onPick(entity);
   }
 
   Future<void> onPick(AssetEntity entity) async {
@@ -123,9 +174,31 @@ class _TzPickerPageState extends State<TzPickerPage> {
       }
     }
 
-    if (widget.limitOptions.limit == 1) {
-      submit();
+    if (TzGallery.shared.limitOptions.limit == 1) submit();
+  }
+
+  void onShowMedia(AssetEntity entity) {
+    if (!isMultiMedia) {
+      onPick(entity);
+      return;
     }
+    final isSelected = _controller._picked.value
+            .indexWhere((element) => element.id == entity.id) !=
+        -1;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => TZMediaDetailPage(
+                entity: entity,
+                isSelected: isSelected,
+              )),
+    ).then(
+      (value) {
+        if (value != null) {
+          onPick(entity);
+        }
+      },
+    );
   }
 
   void submit() {
@@ -201,8 +274,17 @@ class _TzPickerPageState extends State<TzPickerPage> {
   Color get btnColor {
     final options = TzGallery.shared.options;
     if (_controller._picked.value.isEmpty) {
-      return options?.inactiveButtonColor ?? Colors.grey;
+      return options?.inactiveButtonColor ?? ColorCommon.color_E3E9DE;
     }
-    return options?.activeButtonColor ?? Colors.black;
+
+    return options?.activeButtonColor ?? ColorCommon.color_428407;
+  }
+
+  Color get btnTextColor {
+    if (_controller._picked.value.isEmpty) {
+      return ColorCommon.color_B9BDC1;
+    }
+    return Colors.white;
   }
 }
+

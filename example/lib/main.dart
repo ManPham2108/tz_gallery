@@ -35,7 +35,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TzGalleryController controller = TzGalleryController();
   List<File> files = [];
-
   void _open(BuildContext context) async {
     final List<AssetEntity> data = await controller.openGallery(context,
         options: TzGalleryOptions(titleFolderPage: "Albums"));

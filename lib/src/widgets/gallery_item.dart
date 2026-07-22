@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
+import 'package:tz_gallery/src/widgets/choose_button_widget.dart';
 import 'package:tz_gallery/tz_gallery.dart';
 
 class GalleryItem extends StatelessWidget {
-  const GalleryItem({super.key, this.index, required this.asset, this.onTap});
+  const GalleryItem(
+      {super.key,
+      this.index,
+      required this.asset,
+      this.onTapChoose,
+      this.onTap,
+      required this.showMultiChoose});
   //this is a index of item in a list photo/video picked
   final int? index;
   final AssetEntity asset;
-
   final Function()? onTap;
+  final Function()? onTapChoose;
+  final bool showMultiChoose;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -22,22 +29,29 @@ class GalleryItem extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          if (index != null && index != -1)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Badge(
-                  backgroundColor:
-                      TzGallery.shared.options?.badgedColor ?? Colors.green,
-                  label: Text(
-                    "${(index ?? 0) + 1}",
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w400),
+          showMultiChoose
+              ? GestureDetector(
+                  onTap: onTapChoose,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: (index != null && index != -1)
+                          ? Badge(
+                              backgroundColor:
+                                  TzGallery.shared.options?.badgedColor ??
+                                      Colors.green,
+                              label: Text(
+                                "${(index ?? 0) + 1}",
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w600),
+                              ),
+                            )
+                          : const ChooseButtonWidget(),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                )
+              : const SizedBox(),
           if (asset.videoDuration != Duration.zero)
             Positioned(bottom: 6, right: 6, child: _buildDuration())
         ],
