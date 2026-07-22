@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class TzGalleryOptions {
   final TextStyle? headerTextStyle;
@@ -15,6 +16,7 @@ class TzGalleryOptions {
   final Color? backgroundColor;
   final TextStyle? videoDurationTextStyle;
   final Widget? arrowDownIcon;
+  final Future<AssetEntity?> Function()? onCameraCapture;
   TzGalleryOptions(
       {this.headerTextStyle,
       this.folderPrimaryTextStyle,
@@ -28,6 +30,7 @@ class TzGalleryOptions {
       this.videoDurationTextStyle,
       this.backgroundColor,
       this.arrowDownIcon,
+      this.onCameraCapture,
       this.leading});
 
   TzGalleryOptions copyWith({
@@ -43,6 +46,7 @@ class TzGalleryOptions {
     Color? badgedColor,
     Color? backgroundColor,
     TextStyle? videoDurationTextStyle,
+    Future<AssetEntity?> Function()? onCameraCapture,
   }) {
     return TzGalleryOptions(
       headerTextStyle: headerTextStyle ?? this.headerTextStyle,
@@ -60,6 +64,7 @@ class TzGalleryOptions {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       videoDurationTextStyle:
           videoDurationTextStyle ?? this.videoDurationTextStyle,
+      onCameraCapture: onCameraCapture ?? this.onCameraCapture,
     );
   }
 }
@@ -108,3 +113,4 @@ class TzGalleryLimitOptions {
     );
   }
 }
+

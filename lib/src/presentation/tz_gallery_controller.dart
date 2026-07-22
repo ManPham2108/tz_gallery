@@ -18,6 +18,9 @@ class TzGalleryController {
   int _totalVideoType = 0;
   Map<String, int> _entitySizes = {};
 
+  @visibleForTesting
+  List<AssetEntity> get selectedEntities => List.unmodifiable(_picked.value);
+
   TzGalleryController({TzType? type}) {
     _type = type ?? TzType.all;
     _currentFolder.addListener(() {
@@ -125,3 +128,4 @@ class TzGalleryController {
     TzGallery.shared.release();
   }
 }
+

@@ -12,6 +12,9 @@ class _TzPickerPageState extends State<TzPickerPage> {
   late final TzGalleryController _controller;
   TzGalleryLimitOptions get limitOptions => TzGallery.shared.limitOptions;
   bool get isMultiMedia => limitOptions.limit > 1;
+  bool get showCameraTile =>
+      _controller._type != TzType.video &&
+      TzGallery.shared.options?.onCameraCapture != null;
 
   @override
   void initState() {
@@ -51,24 +54,34 @@ class _TzPickerPageState extends State<TzPickerPage> {
                       builder: (context, value, child) {
                         return ValueListenableBuilder(
                           valueListenable: _controller._picked,
-                          builder: (context, picked, child) => GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 2,
-                                    mainAxisSpacing: 2),
-                            itemCount: value?.length ?? 0,
-                            itemBuilder: (context, index) => GalleryItem(
-                              onTap: () => onShowMedia(value[index]),
-                              onTapChoose: () => onPick(value[index]),
-                              index: _controller._picked.value.indexWhere(
-                                  (element) => element.id == value?[index].id),
-                              asset: value![index],
-                              showMultiChoose: isMultiMedia,
-                            ),
-                            padding: EdgeInsets.only(
-                                bottom: 48 + bottomButton + 20 + 2),
-                          ),
+                          builder: (context, picked, child) {
+                            final assets = value ?? const <AssetEntity>[];
+                            final cameraOffset = showCameraTile ? 1 : 0;
+                            return GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 2,
+                                      mainAxisSpacing: 2),
+                              itemCount: assets.length + cameraOffset,
+                              itemBuilder: (context, index) {
+                                if (showCameraTile && index == 0) {
+                                  return _buildCameraTile();
+                                }
+                                final asset = assets[index - cameraOffset];
+                                return GalleryItem(
+                                  onTap: () => onShowMedia(asset),
+                                  onTapChoose: () => onPick(asset),
+                                  index: _controller._picked.value.indexWhere(
+                                      (element) => element.id == asset.id),
+                                  asset: asset,
+                                  showMultiChoose: isMultiMedia,
+                                );
+                              },
+                              padding: EdgeInsets.only(
+                                  bottom: 48 + bottomButton + 20 + 2),
+                            );
+                          },
                         );
                       }))),
           Positioned(
@@ -111,6 +124,35 @@ class _TzPickerPageState extends State<TzPickerPage> {
         ]),
       ),
     );
+  }
+
+  Widget _buildCameraTile() {
+    return Material(
+      color: Colors.black12,
+      child: InkWell(
+        key: const ValueKey('tz_gallery_camera_tile'),
+        onTap: onCameraCapture,
+        child: const Center(
+          child: Icon(Icons.camera_alt_outlined, size: 36),
+        ),
+      ),
+    );
+  }
+
+  Future<void> onCameraCapture() async {
+    if (_controller._picked.value.length >= limitOptions.limit) {
+      showWarningToast(ShowTypeToast.typeLimit);
+      return;
+    }
+
+    final entity = await TzGallery.shared.options?.onCameraCapture?.call();
+    if (!mounted || entity == null) return;
+
+    final entities = _controller._entities.value ?? const <AssetEntity>[];
+    if (!entities.any((item) => item.id == entity.id)) {
+      _controller._entities.value = [entity, ...entities];
+    }
+    await onPick(entity);
   }
 
   Future<void> onPick(AssetEntity entity) async {
@@ -245,3 +287,4 @@ class _TzPickerPageState extends State<TzPickerPage> {
     return Colors.white;
   }
 }
+
